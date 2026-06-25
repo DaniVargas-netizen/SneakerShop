@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>SneakerShop - Empresa</title>
+  <link rel="stylesheet" href="empresa.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div>
+    <h1>SneakerShop - Empresa</h1>
+    <p>Panel administrativo del sistema E-Commerce</p>
+  </div>
+  <button onclick="cerrarSesion()">Cerrar sesión</button>
+</header>
+
+<div class="layout">
+
+<nav class="sidebar">
+  <h2>SneakerShop</h2>
+  <p>ERP Administrativo</p>
+
+  <button onclick="mostrarSeccion('dashboard')">Dashboard</button>
+  <button onclick="mostrarSeccion('productos')">Productos</button>
+  <button onclick="mostrarSeccion('ventas')">Ventas</button>
+  <button onclick="mostrarSeccion('tickets')">Tickets</button>
+  <button onclick="mostrarSeccion('empleados')">Empleados</button>
+  <button onclick="mostrarSeccion('empresa')">Empresa</button>
+  <button onclick="mostrarSeccion('reportes')">Reportes</button>
+  <button onclick="mostrarSeccion('configuracion')">Configuración</button>
+</nav>
+
+<main>
+
+<section id="dashboard" class="seccion">
+  <h2>Dashboard general</h2>
+<div id="alertasStock"></div>
+  <div class="cards-dashboard">
+    <div class="dash-card">
+      <span>Productos</span>
+      <h3 id="dashProductos">0</h3>
+    </div>
+
+    <div class="dash-card">
+      <span>Ventas</span>
+      <h3 id="dashVentas">0</h3>
+    </div>
+
+    <div class="dash-card">
+      <span>Tickets</span>
+      <h3 id="dashTickets">0</h3>
+    </div>
+
+    <div class="dash-card alerta">
+      <span>Stock bajo</span>
+      <h3 id="dashStockBajo">0</h3>
+    </div>
+  </div>
+
+  <div class="panel-card">
+    <h3>Resumen del sistema</h3>
+    <p>Desde este panel se administran los productos, ventas, tickets, reportes y configuración general de SneakerShop.</p>
+  </div>
+</section>
+
+<section id="productos" class="seccion">
+  <h2>Gestión de productos</h2>
+
+  <div class="panel-card">
+    <h3>Agregar producto</h3>
+    <div class="form-grid">
+      <input id="pNombre" placeholder="Nombre del producto">
+      <input id="pMarca" placeholder="Marca">
+      <input id="pPrecio" type="number" placeholder="Precio">
+      <input id="pImg" placeholder="Imagen, ejemplo: img/nike1.jpg">
+    </div>
+    <button class="btn-primary" onclick="agregarProducto()">Agregar producto</button>
+  </div>
+
+  <div class="panel-card">
+    <h3>Productos actuales</h3>
+    <div id="listaProductosEmpresa" class="lista-admin"></div>
+  </div>
+</section>
+
+<section id="ventas" class="seccion">
+  <h2>Ventas realizadas</h2>
+  <div class="panel-card">
+    <div id="listaVentas" class="lista-admin"></div>
+  </div>
+</section>
+
+<section id="tickets" class="seccion">
+  <h2>Tickets generados</h2>
+  <div class="panel-card">
+    <div id="listaTickets" class="lista-admin"></div>
+  </div>
+</section>
+
+<section id="empleados" class="seccion">
+  <h2>Empleados</h2>
+  <div class="panel-card">
+    <div id="listaEmpleados" class="lista-admin"></div>
+  </div>
+</section>
+
+<section id="empresa" class="seccion">
+  <h2>Datos de la empresa</h2>
+  <div class="panel-card">
+    <div id="datosEmpresa"></div>
+  </div>
+</section>
+
+<section id="reportes" class="seccion">
+  <h2>Reportes del sistema</h2>
+  <div class="panel-card">
+    <div id="reporteGeneral"></div>
+  </div>
+</section>
+
+<section id="configuracion" class="seccion">
+  <h2>Configuración</h2>
+
+  <div class="panel-card">
+    <p><b>Estado del sistema:</b> Activo</p>
+    <p><b>Versión:</b> 1.0</p>
+    <p><b>Modo de pago:</b> Pago contra entrega</p>
+
+    <button class="btn-danger" onclick="borrarDatos()">Borrar todos los datos</button>
+  </div>
+  
+</section>
+
+</main>
+</div>
+
+<script src="empresa.js"></script>
+</body>
+</html>

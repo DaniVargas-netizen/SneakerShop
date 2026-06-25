@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>SneakerShop - Tienda en línea</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body { background:#f4f6f8; font-family: Arial; margin:0; }
+    header { background:#111; color:white; padding:15px; display:flex; justify-content:space-between; align-items:center; }
+    header input { padding:8px; width:250px; border-radius:8px; border:none; }
+    .container { display:grid; grid-template-columns: 1fr 350px; gap:20px; padding:20px; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(250px,1fr)); gap:20px; }
+    .card { background:white; padding:15px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,.1); text-align:center; }
+    .card img { width:100%; height:200px; object-fit:contain; }
+    .card button { padding:10px 15px; border:none; border-radius:8px; background:#111; color:white; cursor:pointer; }
+
+    #detalle { background:white; padding:20px; border-radius:15px; margin-bottom:20px; display:none; }
+    #detalle img { width:100%; max-height:300px; object-fit:contain; }
+
+    .tallas button { margin:5px; padding:8px 12px; }
+
+    #carrito { background:white; padding:20px; border-radius:15px; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="img/logo.png" class="logo" alt="SneakerShop">
+    <div>
+      <h2>SneakerShop</h2>
+      <p>Tienda de sneakers</p>
+    </div>
+  </div>
+
+  <div class="busqueda">
+  <div class="search-box">
+    <span>🔍</span>
+    <input type="text" id="buscador" placeholder="Buscar tenis..." onkeyup="buscar()">
+  </div>
+
+  <select id="filtroMarca" onchange="filtrarMarca()">
+    <option value="">Todas las marcas</option>
+    <option value="Nike">Nike</option>
+    <option value="Adidas">Adidas</option>
+    <option value="Jordan">Jordan</option>
+    <option value="Puma">Puma</option>
+    <option value="Vans">Vans</option>
+    <option value="Reebok">Reebok</option>
+    <option value="New Balance">New Balance</option>
+    <option value="Converse">Converse</option>
+    <option value="Asics">Asics</option>
+    <option value="Fila">Fila</option>
+  </select>
+</div>
+</header>
+
+<section class="info-bar">
+    <div>
+        <strong>✓ Envíos a todo México</strong>
+    </div>
+
+    <div>
+        <strong>✓ Pago contra entrega</strong>
+    </div>
+
+    <div>
+        <strong>✓ Productos originales</strong>
+    </div>
+
+    <div>
+        <strong>✓ Garantía de satisfacción</strong>
+    </div>
+</section>
+
+<div class="container">
+
+  <div>
+    <!-- DETALLE DEL PRODUCTO -->
+    <div id="detalle"></div>
+
+    <!-- LISTA PRODUCTOS -->
+    <div class="grid" id="productos"></div>
+  </div>
+
+  <!-- CARRITO -->
+  <div id="carrito">
+    <h3>🛒 Carrito</h3>
+    <div id="listaCarrito"></div>
+    <h3 id="total">$0</h3>
+    <button onclick="pagar()">Pagar</button>
+  </div>
+
+</div>
+
+<footer class="footer">
+
+  <div class="footer-grid">
+
+    <div>
+      <h3>SneakerShop</h3>
+      <p>
+        Tienda especializada en sneakers originales con
+        pago contra entrega y envíos a todo México.
+      </p>
+    </div>
+
+    <div>
+      <h4>Empresa</h4>
+
+      <p>Nosotros</p>
+      <p>Contacto</p>
+      <p>Términos y condiciones</p>
+      <p>Privacidad</p>
+
+    </div>
+
+    <div>
+      <h4>Soporte</h4>
+
+      <p>Preguntas frecuentes</p>
+      <p>Políticas de devolución</p>
+      <p>Atención al cliente</p>
+
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+      © 2026 SneakerShop - Proyecto Académico
+  </div>
+
+</footer>
+
+<script>
+let productos = JSON.parse(localStorage.getItem("productos")) || [
+
+  {
+    id:1,
+    nombre:"Nike Air Force 1",
+    marca:"Nike",
+    precio:2500,
+    img:"img/nike1.jpg",
+    reseñas:[{user:"Carlos", estrellas:5, texto:"Están increíbles."}]
+  },
+  {
+    id:2,
+    nombre:"Adidas UltraBoost",
+    marca:"Adidas",
+    precio:3200,
+    img:"img/adidas1.jpg",
+    reseñas:[{user:"Ana", estrellas:5, texto:"Muy cómodos."}]
+  },
+  {
+    id:3,
+    nombre:"Jordan Retro 1",
+    marca:"Jordan",
+    precio:3800,
+    img:"img/jordan1.jpg",
+    reseñas:[{user:"Pedro", estrellas:5, texto:"Brutales."}]
+  },
+  {
+    id:4,
+    nombre:"Puma RS-X",
+    marca:"Puma",
+    precio:2100,
+    img:"img/puma1.jpg",
+    reseñas:[{user:"Sofia", estrellas:4, texto:"Bonitos."}]
+  },
+  {
+    id:5,
+    nombre:"Converse All Star",
+    marca:"Converse",
+    precio:1600,
+    img:"img/converse1.jpg",
+    reseñas:[{user:"Dani", estrellas:5, texto:"Clásicos."}]
+  },
+  {
+    id:6,
+    nombre:"Vans Old Skool",
+    marca:"Vans",
+    precio:1700,
+    img:"img/vans1.jpg",
+    reseñas:[{user:"Mau", estrellas:5, texto:"Cómodos."}]
+  },
+  {
+    id:7,
+    nombre:"Reebok Classic",
+    marca:"Reebok",
+    precio:1900,
+    img:"img/reebok1.jpg",
+    reseñas:[{user:"Isaac", estrellas:4, texto:"Ligeros."}]
+  },
+  {
+    id:8,
+    nombre:"New Balance 550",
+    marca:"New Balance",
+    precio:2400,
+    img:"img/nb1.jpg",
+    reseñas:[{user:"Alan", estrellas:5, texto:"Buen estilo."}]
+  },
+  {
+    id:9,
+    nombre:"Nike Air Max 90",
+    marca:"Nike",
+    precio:2900,
+    img:"img/nike2.jpg",
+    reseñas:[{user:"Raúl", estrellas:5, texto:"Muy cómodos."}]
+  },
+  {
+    id:10,
+    nombre:"Nike Dunk Low",
+    marca:"Nike",
+    precio:3100,
+    img:"img/nike3.jpg",
+    reseñas:[{user:"Kevin", estrellas:5, texto:"Están increíbles."}]
+  },
+  {
+    id:11,
+    nombre:"Adidas Forum",
+    marca:"Adidas",
+    precio:2800,
+    img:"img/adidas2.jpg",
+    reseñas:[{user:"Sergio", estrellas:4, texto:"Buen diseño."}]
+  },
+  {
+    id:12,
+    nombre:"Adidas Superstar",
+    marca:"Adidas",
+    precio:2600,
+    img:"img/adidas3.jpg",
+    reseñas:[{user:"Mario", estrellas:5, texto:"Clásicos."}]
+  },
+  {
+    id:13,
+    nombre:"Jordan 4 Retro",
+    marca:"Jordan",
+    precio:4200,
+    img:"img/jordan2.jpg",
+    reseñas:[{user:"Luis", estrellas:5, texto:"Brutales."}]
+  },
+  {
+    id:14,
+    nombre:"Jordan 1 Mid",
+    marca:"Jordan",
+    precio:3600,
+    img:"img/jordan3.jpg",
+    reseñas:[{user:"Diego", estrellas:4, texto:"Muy buenos."}]
+  },
+  {
+    id:15,
+    nombre:"Puma Suede Classic",
+    marca:"Puma",
+    precio:2000,
+    img:"img/puma2.jpg",
+    reseñas:[{user:"Iván", estrellas:4, texto:"Bonitos."}]
+  },
+  {
+    id:16,
+    nombre:"Vans Sk8-Hi",
+    marca:"Vans",
+    precio:1900,
+    img:"img/vans2.jpg",
+    reseñas:[{user:"Andrés", estrellas:5, texto:"Perfectos."}]
+  },
+  {
+    id:17,
+    nombre:"Reebok Club C 85",
+    marca:"Reebok",
+    precio:2100,
+    img:"img/reebok2.jpg",
+    reseñas:[{user:"Hugo", estrellas:4, texto:"Elegantes."}]
+  },
+  {
+    id:18,
+    nombre:"New Balance 574",
+    marca:"New Balance",
+    precio:2300,
+    img:"img/nb2.jpg",
+    reseñas:[{user:"Fernando", estrellas:5, texto:"Muy buena calidad."}]
+  }
+  ,
+{
+  id:19,
+  nombre:"Asics Gel-Kayano 14",
+  marca:"Asics",
+  precio:3400,
+  img:"img/asics1.jpg",
+  descripcion:"Tenis deportivos con diseño moderno, ideales para caminar, correr y uso diario. Cuentan con buena amortiguación y comodidad.",
+  reseñas:[
+    {user:"Emiliano", estrellas:5, texto:"Muy cómodos y se ven elegantes."}
+  ]
+},
+{
+  id:20,
+  nombre:"Fila Disruptor II",
+  marca:"Fila",
+  precio:2200,
+  img:"img/fila1.jpg",
+  descripcion:"Modelo casual con suela robusta y estilo urbano. Perfectos para combinar con outfits modernos.",
+  reseñas:[
+    {user:"Valeria", estrellas:4, texto:"Bonitos, cómodos y combinan muy bien."}
+  ]
+}
+];
+
+
+let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+let productoActual = null;
+let tallaSeleccionada = null;
+
+const contenedor = document.getElementById("productos");
+const detalle = document.getElementById("detalle");
+const listaCarrito = document.getElementById("listaCarrito");
+const totalTxt = document.getElementById("total");
+
+function volverCatalogo() {
+  detalle.style.display = "none";
+  detalle.innerHTML = "";
+  productoActual = null;
+  tallaSeleccionada = null;
+
+  mostrarProductos(productos);
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+  function volverCatalogo() {
+  detalle.style.display = "none";
+  detalle.innerHTML = "";
+  productoActual = null;
+  tallaSeleccionada = null;
+
+  mostrarProductos(productos);
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+function agregarProductosFaltantes() {
+  let nuevos = [
+    {
+      id:19,
+      nombre:"Asics Gel-Kayano 14",
+      marca:"Asics",
+      precio:3400,
+      img:"img/asics1.jpg",
+      descripcion:"Tenis deportivos con diseño moderno, buena amortiguación y comodidad para uso diario.",
+      reseñas:[{user:"Emiliano", estrellas:5, texto:"Muy cómodos y elegantes."}]
+    },
+    {
+      id:20,
+      nombre:"Fila Disruptor II",
+      marca:"Fila",
+      precio:2200,
+      img:"img/fila1.jpg",
+      descripcion:"Modelo casual con suela robusta y estilo urbano para outfits modernos.",
+      reseñas:[{user:"Valeria", estrellas:4, texto:"Bonitos y combinan muy bien."}]
+    }
+  ];
+
+  nuevos.forEach(nuevo => {
+    let existe = productos.some(p => p.id === nuevo.id || p.nombre === nuevo.nombre);
+    if (!existe) {
+      productos.push(nuevo);
+    }
+  });
+
+  localStorage.setItem("productos", JSON.stringify(productos));
+}
+
+function inicializarStock() {
+  productos.forEach(p => {
+    if (p.stock === undefined) {
+      p.stock = 12;
+    }
+  });
+
+  localStorage.setItem("productos", JSON.stringify(productos));
+}
+
+function mostrarProductos(lista = productos) {
+  contenedor.innerHTML = "";
+  lista.forEach(p => {
+    contenedor.innerHTML += `
+      <div class="card">
+        <img src="${p.img}">
+        <h3>${p.nombre}</h3>
+        <p>${p.marca}</p>
+        <p><b>$${p.precio}</b></p>
+        <button onclick="verProducto(${p.id})">Ver producto</button>
+      </div>
+    `;
+  });
+  function volverCatalogo() {
+  detalle.style.display = "none";
+  productoActual = null;
+  tallaSeleccionada = null;
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+}
+function guardarProductos() {
+  localStorage.setItem("productos", JSON.stringify(productos));
+}
+
+
+function verProducto(id) {
+  let p = productos.find(x => x.id === id);
+  productoActual = p;
+  tallaSeleccionada = null;
+
+  detalle.style.display = "block";
+  detalle.innerHTML =`
+
+  <button class="btnVolver" onclick="volverCatalogo()">← Regresar al catálogo</button>
+
+    <div class="detalle-producto">
+      <div class="detalle-imagen">
+        <img src="${p.img}">
+      </div>
+
+      <div class="detalle-info">
+        <span class="marca-producto">${p.marca}</span>
+        <h2>${p.nombre}</h2>
+        <p class="descripcion-producto">
+          ${p.descripcion || "Producto original de alta calidad, ideal para uso diario, estilo urbano y comodidad."}
+        </p>
+
+        <p class="precio-detalle">$${p.precio}</p>
+        <p class="entrega">Entrega estimada: 3 a 5 días hábiles</p>
+
+        <h4>Selecciona talla:</h4>
+        <div class="tallas">
+          <button onclick="seleccionarTalla(26)">26</button>
+          <button onclick="seleccionarTalla(27)">27</button>
+          <button onclick="seleccionarTalla(28)">28</button>
+          <button onclick="seleccionarTalla(29)">29</button>
+        </div>
+
+        <h4>Cantidad:</h4>
+        <input type="number" id="cantidad" value="1" min="1">
+
+        <br><br>
+        <button class="btn-principal" onclick="agregarCarrito()">Agregar al carrito</button>
+      </div>
+    </div>
+
+    <hr>
+
+    <h3>Reseñas de clientes</h3>
+    <div id="listaReseñas"></div>
+
+    <hr>
+
+    <h3>Agregar reseña</h3>
+    <input id="nombreResena" placeholder="Tu nombre"><br><br>
+
+    <select id="estrellasResena">
+      <option value="5">5 estrellas</option>
+      <option value="4">4 estrellas</option>
+      <option value="3">3 estrellas</option>
+      <option value="2">2 estrellas</option>
+      <option value="1">1 estrella</option>
+    </select><br><br>
+
+    <textarea id="textoResena" placeholder="Escribe tu opinión..." rows="3" style="width:100%;"></textarea><br><br>
+
+    <button onclick="agregarResena()">Enviar reseña</button>
+  `;
+
+  mostrarReseñas();
+}
+
+function mostrarReseñas() {
+  let cont = document.getElementById("listaReseñas");
+  cont.innerHTML = "";
+  productoActual.reseñas.forEach(r => {
+    cont.innerHTML += `<p><b>${r.user}</b>: ${"⭐".repeat(r.estrellas)}<br>${r.texto}</p>`;
+  });
+}
+
+function agregarResena() {
+  let nombre = document.getElementById("nombreResena").value;
+  let estrellas = parseInt(document.getElementById("estrellasResena").value);
+  let texto = document.getElementById("textoResena").value;
+
+  if (nombre === "" || texto === "") {
+    alert("Completa todos los campos");
+    return;
+  }
+
+  productoActual.reseñas.push({
+    user: nombre,
+    estrellas: estrellas,
+    texto: texto
+  });
+
+  guardarProductos(); // 👈 GUARDA EN LOCALSTORAGE
+
+  document.getElementById("nombreResena").value = "";
+  document.getElementById("textoResena").value = "";
+  
+
+  mostrarReseñas();
+}
+
+
+function seleccionarTalla(t) {
+  tallaSeleccionada = t;
+  alert("Talla " + t + " seleccionada");
+}
+
+function agregarCarrito() {
+  if (!tallaSeleccionada) {
+    alert("Selecciona una talla");
+    return;
+  }
+  let cant = parseInt(document.getElementById("cantidad").value);
+
+  carrito.push({...productoActual, talla:tallaSeleccionada, cantidad:cant});
+  actualizarCarrito();
+}
+
+function actualizarCarrito() {
+  listaCarrito.innerHTML = "";
+  let total = 0;
+
+  if (carrito.length === 0) {
+    listaCarrito.innerHTML = "<p>Tu carrito está vacío.</p>";
+  }
+
+  carrito.forEach((p, i) => {
+    let subtotal = p.precio * p.cantidad;
+    total += subtotal;
+
+    listaCarrito.innerHTML += `
+      <div class="item-carrito">
+        <b>${p.nombre}</b>
+        <small>Talla: ${p.talla} | Cantidad: ${p.cantidad}</small><br>
+        <small>Subtotal: $${subtotal} MXN</small><br>
+        <button onclick="quitar(${i})">Eliminar</button>
+      </div>
+    `;
+  });
+
+  totalTxt.innerText = "Total: $" + total + " MXN";
+  localStorage.setItem("carrito", JSON.stringify(carrito));
+}
+
+function quitar(i){
+  carrito.splice(i,1);
+  actualizarCarrito();
+}
+
+function buscar() {
+  let texto = document.getElementById("buscador").value.toLowerCase();
+  let filtrados = productos.filter(p => 
+    p.nombre.toLowerCase().includes(texto) || p.marca.toLowerCase().includes(texto)
+  );
+  mostrarProductos(filtrados);
+}
+
+function filtrarMarca() {
+  let marca = document.getElementById("filtroMarca").value;
+  if (marca === "") mostrarProductos(productos);
+  else mostrarProductos(productos.filter(p => p.marca === marca));
+}
+
+function pagar() {
+  if (carrito.length === 0) {
+    alert("El carrito está vacío");
+    return;
+  }
+
+  let total = 0;
+  carrito.forEach(p => {
+    total += p.precio * p.cantidad;
+  });
+
+  let ventas = JSON.parse(localStorage.getItem("ventas")) || [];
+  let tickets = JSON.parse(localStorage.getItem("tickets")) || [];
+
+  let productosLS = JSON.parse(localStorage.getItem("productos")) || productos;
+
+carrito.forEach(item => {
+  let prod = productosLS.find(p => p.id == item.id);
+
+  if (prod) {
+    prod.stock = Number(prod.stock || 12) - Number(item.cantidad);
+
+    if (prod.stock < 0) {
+      prod.stock = 0;
+    }
+  }
+});
+
+localStorage.setItem("productos", JSON.stringify(productosLS));
+
+  let numeroPedido = "SNK-" + Date.now();
+
+  ventas.push({
+    total: total,
+    fecha: new Date().toLocaleString(),
+    metodoPago: "Pago contra entrega",
+    estado: "Pendiente de entrega",
+    pedido: numeroPedido
+  });
+
+  tickets.push({
+    productos: carrito,
+    total: total,
+    fecha: new Date().toLocaleString(),
+    metodoPago: "Pago contra entrega",
+    estado: "Pendiente de entrega",
+    pedido: numeroPedido
+  });
+
+  localStorage.setItem("ventas", JSON.stringify(ventas));
+  localStorage.setItem("tickets", JSON.stringify(tickets));
+
+  
+
+carrito.forEach(item => {
+
+    let prod = productosLS.find(p => p.id == item.id);
+
+    if (prod) {
+        prod.stock = (prod.stock || 12) - item.cantidad;
+
+        if (prod.stock < 0) {
+            prod.stock = 0;
+        }
+    }
+
+});
+
+localStorage.setItem("productos", JSON.stringify(productosLS));
+  document.body.insertAdjacentHTML("beforeend", `
+    <div class="modal-ticket" id="modalTicket">
+      <div class="ticket-box">
+        <h2>Pedido generado</h2>
+        <p><b>Número de pedido:</b><br>${numeroPedido}</p>
+        <p><b>Método de pago:</b><br>Pago contra entrega</p>
+        <p><b>Total a pagar al recibir:</b><br>$${total} MXN</p>
+        <p><b>Entrega estimada:</b><br>3 a 5 días hábiles</p>
+        <button onclick="cerrarTicket()">Aceptar</button>
+      </div>
+    </div>
+  `);
+
+  carrito = [];
+  localStorage.removeItem("carrito");
+  actualizarCarrito();
+}
+
+function cerrarTicket() {
+  let modal = document.getElementById("modalTicket");
+  if (modal) modal.remove();
+}
+
+
+agregarProductosFaltantes();
+inicializarStock();
+mostrarProductos();
+guardarProductos();
+
+actualizarCarrito();
+
+</script>
+
+
+</body>
+</html>
